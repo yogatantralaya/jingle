@@ -1,6 +1,7 @@
 package com.pdp.finalproject.jingle.models;
 
 public class User {
+	String id;
 	String firstName;
 	String lastName;
 	String email;
@@ -8,7 +9,9 @@ public class User {
 	String location;
 	String dp;
 
-	public User(String firstName, String lastName, String email, String password, String location, String dp) {
+	public User(String id, String firstName, String lastName, String email, String password, String location,
+			String dp) {
+		this.id = id;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.email = email;
@@ -24,6 +27,14 @@ public class User {
 
 	public User(String email) {
 		this.email = email;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getFirstName() {

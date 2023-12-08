@@ -6,12 +6,12 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.sql.DataSource;
 
-import com.pdp.finalproject.jingle.utils.JingleDbUtil;
+import com.pdp.finalproject.jingle.utils.DbUtil;
 
 public class BaseServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 6876760343276491852L;
-	JingleDbUtil jingleDbUtil;
+	DbUtil dbUtil;
 
 	// Tomcat will inject the connection pool object to the dataSource Variable
 	@Resource(name = "jdbc/jingle")
@@ -24,7 +24,7 @@ public class BaseServlet extends HttpServlet {
 		super.init();
 
 		try {
-			jingleDbUtil = new JingleDbUtil(dataSource);
+			dbUtil = new DbUtil(dataSource);
 		}
 
 		catch (Exception exc) {

@@ -25,7 +25,7 @@ public class ArtistServlet extends BaseServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		try {
-			List<Artist> artistList = jingleDbUtil.getArtists();
+			List<Artist> artistList = dbUtil.getArtists();
 			String artistsJsonString = new Gson().toJson(artistList);
 			PrintWriter out = response.getWriter();
 			response.setContentType("application/json");

@@ -76,7 +76,7 @@ public class LoginServlet extends BaseServlet {
 
 		User user = new User(email, password);
 
-		boolean userExists = jingleDbUtil.findUser(user);
+		boolean userExists = dbUtil.findUser(user);
 		if (userExists) {
 			LocalTime currentTime = LocalTime.now();
 
@@ -102,7 +102,7 @@ public class LoginServlet extends BaseServlet {
 
 			// Print the hours alone
 			loginAttempts = 0;
-			User userDetails = jingleDbUtil.getUserDetails(user);
+			User userDetails = dbUtil.getUserDetails(user);
 			request.setAttribute("User_Details", userDetails);
 			request.setAttribute("Greetings", greetings);
 			request.removeAttribute("loginError");
@@ -131,10 +131,10 @@ public class LoginServlet extends BaseServlet {
 		String dp = "media/default_dp.png";
 
 		// create a user object
-		User user = new User(firstName, lastName, email, password, location, dp);
+		User user = new User(null, firstName, lastName, email, password, location, dp);
 
 		// find email id
-		boolean mailExists = jingleDbUtil.findEmail(email);
+		boolean mailExists = dbUtil.findEmail(email);
 
 		request.removeAttribute("emailError");
 
@@ -146,9 +146,9 @@ public class LoginServlet extends BaseServlet {
 		}
 
 		else {
-			// call the registerUser method in the JingleDbUtil class to register the new
+			// call the registerUser method in the dbUtil class to register the new
 			// user to the userDb
-			jingleDbUtil.registerUser(user);
+			dbUtil.registerUser(user);
 
 			// to go back to the login page
 			request.setAttribute("registrationSuccessful", "Registration Successful, Pls Login");
@@ -158,7 +158,7 @@ public class LoginServlet extends BaseServlet {
 	}
 
 	private void home(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		List<Artist> artistList = jingleDbUtil.getArtists();
+		List<Artist> artistList = dbUtil.getArtists();
 		request.setAttribute("Artist_List", artistList);
 		RequestDispatcher dispatcher = request.getRequestDispatcher("jsp/homeNew.jsp");
 		dispatcher.forward(request, response);

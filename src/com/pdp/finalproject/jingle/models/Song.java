@@ -1,22 +1,26 @@
 package com.pdp.finalproject.jingle.models;
 
 public class Song {
-	
+
 	String id;
 	String title;
 	String genre;
 	String duration;
 	String location;
-	
-	public Song(String id, String title, String genre, String duration, String location) {
-		super();
+	String albumCover;
+	String artist;
+
+	public Song(String id, String title, String genre, String duration, String location, String albumCover,
+			String artist) {
 		this.id = id;
 		this.title = title;
 		this.genre = genre;
 		this.duration = duration;
 		this.location = location;
+		this.albumCover = albumCover;
+		this.artist = artist;
 	}
-	
+
 	public String getId() {
 		return id;
 	}
@@ -55,6 +59,14 @@ public class Song {
 
 	public void setLocation(String location) {
 		this.location = location;
+	}
+
+	public String getAlbumCover() {
+		return albumCover;
+	}
+
+	public void setAlbumCover(String albumCover) {
+		this.albumCover = albumCover;
 	}
 
 }
