@@ -4,44 +4,18 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 
-import javax.annotation.Resource;
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.sql.DataSource;
 
 import com.google.gson.Gson;
 import com.pdp.finalproject.jingle.models.Artist;
-import com.pdp.finalproject.jingle.utils.JingleDbUtil;
 
 @WebServlet("/ArtistServlet")
-public class ArtistServlet extends HttpServlet {
+public class ArtistServlet extends BaseServlet {
 
 	private static final long serialVersionUID = 1L;
-
-	JingleDbUtil jingleDbUtil;
-
-	// Tomcat will inject the connection pool object to the dataSource Variable
-	@Resource(name = "jdbc/jingle")
-	private DataSource dataSource;
-
-	/**
-	 * @overriding the init() method to create an instance of the db
-	 */
-	public void init(ServletConfig config) throws ServletException {
-		super.init();
-
-		try {
-			jingleDbUtil = new JingleDbUtil(dataSource);
-		}
-
-		catch (Exception exc) {
-			throw new ServletException(exc);
-		}
-	}
 
 	public ArtistServlet() {
 		super();
@@ -51,7 +25,6 @@ public class ArtistServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		try {
-
 			List<Artist> artistList = jingleDbUtil.getArtists();
 			String artistsJsonString = new Gson().toJson(artistList);
 			PrintWriter out = response.getWriter();

@@ -4,48 +4,27 @@ import java.io.IOException;
 import java.time.LocalTime;
 import java.util.List;
 
-import javax.annotation.Resource;
 import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.sql.DataSource;
 
 import com.pdp.finalproject.jingle.models.Artist;
 import com.pdp.finalproject.jingle.models.User;
-import com.pdp.finalproject.jingle.utils.JingleDbUtil;
 
 /**
  * Servlet implementation class LoginServlet
  */
 @WebServlet("/LoginServlet")
-public class LoginServlet extends HttpServlet {
+public class LoginServlet extends BaseServlet {
 	private static final long serialVersionUID = 1L;
 	private int loginAttempts = 0;
 
-	JingleDbUtil jingleDbUtil;
-
-	// Tomcat will inject the connection pool object to the dataSource Variable
-	@Resource(name = "jdbc/jingle")
-	private DataSource dataSource;
-
-	/**
-	 * @overriding the init() method to create an instance of the db
-	 */
-	public void init(ServletConfig config) throws ServletException {
-		super.init();
-
-		try {
-			jingleDbUtil = new JingleDbUtil(dataSource);
-		}
-
-		catch (Exception exc) {
-			throw new ServletException(exc);
-		}
+	public LoginServlet() {
+		super();
 	}
 
 	/**
@@ -181,7 +160,7 @@ public class LoginServlet extends HttpServlet {
 	private void home(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		List<Artist> artistList = jingleDbUtil.getArtists();
 		request.setAttribute("Artist_List", artistList);
-		RequestDispatcher dispatcher = request.getRequestDispatcher("jsp/home.jsp");
+		RequestDispatcher dispatcher = request.getRequestDispatcher("jsp/homeNew.jsp");
 		dispatcher.forward(request, response);
 	}
 

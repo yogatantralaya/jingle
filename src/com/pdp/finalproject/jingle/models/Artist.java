@@ -5,7 +5,7 @@ public class Artist {
 	String firstName;
 	String lastName;
 	String location;
-	
+
 	public Artist(String id, String firstName, String lastName, String location) {
 		this.id = id;
 		this.firstName = firstName;
@@ -44,7 +44,5 @@ public class Artist {
 	public void setLocation(String location) {
 		this.location = location;
 	}
-	
-	
 
 }
