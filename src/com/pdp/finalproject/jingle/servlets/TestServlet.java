@@ -1,4 +1,4 @@
-package com.pdp.finalproject.jingle;
+package com.pdp.finalproject.jingle.servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;

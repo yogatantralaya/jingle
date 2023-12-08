@@ -1,4 +1,4 @@
-package com.pdp.finalproject.jingle;
+package com.pdp.finalproject.jingle.models;
 
 public class Artist {
 	String id;

@@ -17,7 +17,7 @@
 <body>
     <div class="wrapper">
         <div class="square"><img src="images/jingle_logo.jpeg"></div>
-        <form action="JingleServlet" method="GET">
+        <form action="LoginServlet" method="GET">
         <input type="hidden" name="command" value="REGISTER"/>
             <h1>Create New Account</h1>
             <p>Fill in the form</p>
@@ -49,7 +49,7 @@
             </div>
             <button type="submit" id="submit" class="btn">Register</button>
             <div class="register-link">
-                <p>Already have an account? <a href="jingle_login.jsp">Login</a></p>
+                <p>Already have an account? <a href="login.jsp">Login</a></p>
             </div>
         </form>
     </div>

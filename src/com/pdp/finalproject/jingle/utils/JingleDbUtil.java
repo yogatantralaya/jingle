@@ -1,4 +1,4 @@
-package com.pdp.finalproject.jingle;
+package com.pdp.finalproject.jingle.utils;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,6 +10,8 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import com.pdp.finalproject.jingle.models.Artist;
+import com.pdp.finalproject.jingle.models.User;
 
 public class JingleDbUtil {
 
@@ -21,7 +23,7 @@ public class JingleDbUtil {
 		this.dataSource = dataSource;
 	}
 
-	//findUser() method validates if the user already exists on the db
+	// findUser() method validates if the user already exists on the db
 	public boolean findUser(User user) throws Exception {
 
 		// initialize the sql attributes
@@ -47,7 +49,7 @@ public class JingleDbUtil {
 			// get the student details and create a student object
 			if (myRes.next()) {
 				return true;
-			} 
+			}
 			return false;
 		}
 
@@ -56,7 +58,7 @@ public class JingleDbUtil {
 		}
 
 	}
-	
+
 	public User getUserDetails(User user) throws Exception {
 
 		// initialize the sql attributes
@@ -87,11 +89,11 @@ public class JingleDbUtil {
 				String password = myRes.getString("user_password");
 				String location = myRes.getString("user_location");
 				String dp = myRes.getString("user_dp_location");
-				
-				User userDetails = new User(firstName,lastName,email,password,location,dp);
-				
+
+				User userDetails = new User(firstName, lastName, email, password, location, dp);
+
 				return userDetails;
-			} 
+			}
 			return null;
 		}
 
@@ -100,38 +102,38 @@ public class JingleDbUtil {
 		}
 
 	}
-	
+
 	// findEmail() method validates if the mail id already exists on the db
 	public boolean findEmail(String email) throws Exception {
 		// initialize the sql attributes
-				Connection myCon = null;
-				PreparedStatement myStmt = null;
-				ResultSet myRes = null;
+		Connection myCon = null;
+		PreparedStatement myStmt = null;
+		ResultSet myRes = null;
 
-				try {
+		try {
 
-					// create a connection
-					myCon = dataSource.getConnection();
+			// create a connection
+			myCon = dataSource.getConnection();
 
-					// prepare the statement
-					String query = "select * from user where user_email=?";
-					myStmt = myCon.prepareStatement(query);
+			// prepare the statement
+			String query = "select * from user where user_email=?";
+			myStmt = myCon.prepareStatement(query);
 
-					myStmt.setString(1, email);
+			myStmt.setString(1, email);
 
-					// execute query
-					myRes = myStmt.executeQuery();
+			// execute query
+			myRes = myStmt.executeQuery();
 
-					// get the student details and create a student object
-					if (myRes.next()) {
-						return true;
-					} 
-					return false;
-				}
+			// get the student details and create a student object
+			if (myRes.next()) {
+				return true;
+			}
+			return false;
+		}
 
-				finally {
-					closeConnection(myCon, myStmt, myRes);
-				}
+		finally {
+			closeConnection(myCon, myStmt, myRes);
+		}
 	}
 
 	// registerUser() method adds a new user to the Db
@@ -144,7 +146,8 @@ public class JingleDbUtil {
 			myCon = dataSource.getConnection();
 			// create an sql statement
 			String query = "INSERT INTO user"
-					+ "(user_first_name,user_last_name,user_email,user_password,user_location,user_dp_location)" + "values(?,?,?,?,?,?)";
+					+ "(user_first_name,user_last_name,user_email,user_password,user_location,user_dp_location)"
+					+ "values(?,?,?,?,?,?)";
 			myStmt = myCon.prepareStatement(query);
 
 			// setting the values for the place holders
@@ -163,11 +166,12 @@ public class JingleDbUtil {
 		}
 
 	}
-	
-public List<Artist> getArtists() throws Exception {
-		
-		List<Artist> artistList = new ArrayList<>();;
-		
+
+	public List<Artist> getArtists() throws Exception {
+
+		List<Artist> artistList = new ArrayList<>();
+		;
+
 		Connection myCon = null;
 		PreparedStatement myStmt = null;
 		ResultSet myRes = null;
@@ -184,16 +188,16 @@ public List<Artist> getArtists() throws Exception {
 			myRes = myStmt.executeQuery();
 
 			// get the student details and create a student object
-			while(myRes.next()) {
+			while (myRes.next()) {
 				String id = myRes.getString("artist_id");
 				String firstName = myRes.getString("artist_first_name");
 				String lastName = myRes.getString("artist_last_name");
 				String location = myRes.getString("artist_photo");
-				
-				Artist artist = new Artist(id,firstName,lastName,location);
-				
+
+				Artist artist = new Artist(id, firstName, lastName, location);
+
 				artistList.add(artist);
-				
+
 			}
 
 		} finally {
@@ -219,5 +223,5 @@ public List<Artist> getArtists() throws Exception {
 			exec.printStackTrace();
 		}
 	}
-	
+
 }

@@ -1,4 +1,4 @@
-package com.pdp.finalproject.jingle;
+package com.pdp.finalproject.jingle.models;
 
 public class User {
 	String firstName;
@@ -7,8 +7,8 @@ public class User {
 	String password;
 	String location;
 	String dp;
-	
-	public User(String firstName, String lastName, String email, String password,String location,String dp) {
+
+	public User(String firstName, String lastName, String email, String password, String location, String dp) {
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.email = email;
@@ -16,7 +16,7 @@ public class User {
 		this.location = location;
 		this.dp = dp;
 	}
-	
+
 	public User(String email, String password) {
 		this.email = email;
 		this.password = password;
@@ -25,7 +25,7 @@ public class User {
 	public User(String email) {
 		this.email = email;
 	}
-	
+
 	public String getFirstName() {
 		return firstName;
 	}
@@ -45,7 +45,7 @@ public class User {
 	public String getLocation() {
 		return location;
 	}
-	
+
 	public String getDp() {
 		return dp;
 	}
@@ -67,13 +67,12 @@ public class User {
 	}
 
 	public void setLocation(String location) {
-		
+
 		this.location = location;
 	}
+
 	public void setDp(String dp) {
 		this.dp = dp;
 	}
-	
-	
 
 }
