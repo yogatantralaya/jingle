@@ -256,7 +256,7 @@
 }
 .wrapper .body-container .content .song-catalog #album-list .album {
   display: flex;
-  width: 500px;
+  width: 550px;
   height: 300px;
   margin-right: 50px;
 }
@@ -279,17 +279,18 @@
   margin-right: 0px;
 }
 .wrapper .body-container .content .song-catalog #album-list .album .album-songs .song .song-number {
+  font-size: 18px;
   text-align: center;
   vertical-align: middle;
 }
 .wrapper .body-container .content .song-catalog #album-list .album .album-songs .song .song-details {
-  margin-left: 20px;
+  margin-left: 25px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 .wrapper .body-container .content .song-catalog #album-list .album .album-songs .song .song-details .song-title {
-  font-size: 20px;
+  font-size: 18px;
   margin-bottom: 5px;
 }
 .wrapper .body-container .content .song-catalog #album-list .album .album-songs .song .song-details .song-additional-info {
