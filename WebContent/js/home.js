@@ -76,16 +76,21 @@ function searchSong(searchQuery) {
 		method: "GET",
 		dataType: "json",
 		success: function(data) {
-			$("#search-list").empty();
-			let songsList = document.getElementById("search-list");
-			for (let i = 0; i < data.length; i++) {
-				songsList.innerHTML += `<div class="song-info" onclick='playSong(${JSON.stringify(
-					data
-				)}, ${i})'>
+			if (!data.url) {
+				$("#search-list").empty();
+				let songsList = document.getElementById("search-list");
+				for (let i = 0; i < data.length; i++) {
+					songsList.innerHTML += `<div class="song-info" onclick='playSong(${JSON.stringify(
+						data
+					)}, ${i})'>
 								<img class="song-cover" src="${data[i].albumCover}" />
 								<div class="song-name">${data[i].title}</div>
 							</div>`;
+				}
+			} else {
+				window.location = contextPath + data.url;
 			}
+
 		},
 		error: function(error) {
 			console.error("Error searching song:", error);
