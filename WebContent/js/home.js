@@ -5,7 +5,7 @@ $(document).ready(function() {
 	getSongs("trending-list", "trendingSongs", userId);
 	getSongs("recent-list", "recentlyPlayed", userId);
 	getSongs("recommended-list", "trendingSongs", userId);
-	getSongs("album-list", "albumSongs", userId);
+	getSongs("album-list", "albums", userId);
 
 	$("#song-search-bar").keyup(function(event) {
 		if (event.target.value.length == 0) {
@@ -50,61 +50,51 @@ function getSongs(divId, requestType, userId = null) {
 		method: "GET",
 		dataType: "json",
 		success: function(data) {
-			let albumList = document.getElementById(divId);
-			if (requestType == "albumSongs") {
-				const result = Object.groupBy(data, ({ albumCover }) => albumCover);
-				for (let albumCover in result) {
-					let img = `<img class="album-cover" src="${data[i].albumCover}" />`
-					for (let i = 0; i < data.length; i++) {
-						albumList += `<div class="song-info" onclick='playSong(${JSON.stringify(data)}, ${i})'>
-							<div class="song-info">${data[i].title}</div>
-						</div>`;
+			let divElement = document.getElementById(divId);
+			if (requestType == "albums") {
+				console.log(data);
+				let albums = Object.groupBy(data, ({ albumCover }) => albumCover);
+				console.log(albums);
+				let albumElement;
+				for (let album in albums) {
+					albumElement = `<div class="album">
+									<img class="album-cover" src="${album}"/>
+									<div class="album-songs">`
+					for (let i = 0; i < albums[album].length; i++) {
+						albumElement += `<div class="song" onclick='playSong(${JSON.stringify(
+							data
+						)}, ${i})'>
+										<p class="song-number">${i + 1}</p>
+										<div class="song-details">
+											<p class="song-title">${albums[album][i].title}</p>
+											<div class="song-additional-info">
+											<p class="song-artist">${albums[album][i].artists.toString()}</p>
+											<div class="seperator"></div>
+											<p class="song-duration">${albums[album][i].duration}</p>
+											</div>
+										</div>
+									</div>`;
 					}
-					let album = img + albumList;
+					albumElement += `</div></div>`;
 				}
+				divElement.innerHTML = albumElement;
 			}
 			else {
 
 				for (let i = 0; i < data.length; i++) {
-					songsList.innerHTML += `<div class="song-info" onclick='playSong(${JSON.stringify(
+					let songElement = `<div class="song-info" onclick='playSong(${JSON.stringify(
 						data
 					)}, ${i})'>
 							<img class="song-cover" src="${data[i].albumCover}" />
 							<div class="song-name">${data[i].title}</div>
 						</div>`;
+					divElement.innerHTML += songElement
 				}
 				if (requestType == "recentlyPlayed") {
 					audioSources = data;
 					updateSongDisplay();
 					loadTrack();
 				}
-			}
-		},
-		error: function(error) {
-			console.error("Error fetching song:", error);
-		},
-	});
-}
-
-function getAllSongs(divId, requestType) {
-	$.ajax({
-		url: `/Jingle/SongServlet?requestType=${requestType}`,
-		method: "GET",
-		dataType: "json",
-		success: function(data) {
-			let songsList = document.getElementById(divId);
-			for (let i = 0; i < data.length; i++) {
-				songsList.innerHTML += `<div class="song-info" onclick='playSong(${JSON.stringify(
-					data
-				)}, ${i})'>
-							<img class="song-cover" src="${data[i].albumCover}" />
-							<div class="song-name">${data[i].title}</div>
-						</div>`;
-			}
-			if (requestType == "recentlyPlayed") {
-				audioSources = data;
-				updateSongDisplay();
-				loadTrack();
 			}
 		},
 		error: function(error) {
@@ -181,6 +171,7 @@ function initializeAudioPlayer() {
 		loadTrack();
 	}
 	audioPlayer.addEventListener("timeupdate", updateProgressBar);
+	audioPlayer.addEventListener("ended", playNext);
 }
 
 function togglePlayPause() {
@@ -194,6 +185,7 @@ function togglePlayPause() {
 }
 
 function playNext() {
+	console.log("test")
 	currentTrackIndex = (currentTrackIndex + 1) % audioSources.length;
 	updateSongDisplay();
 	loadTrack();
@@ -252,6 +244,7 @@ function updateLoopIcon() {
 		: '<i class="material-symbols-outlined">repeat</i>';
 }
 function updateProgressBar() {
+	console.log(audioPlayer.currentTime);
 	const progressBar = document.getElementById("progressControl");
 	progressBar.value = (audioPlayer.currentTime / audioPlayer.duration) * 100;
 }

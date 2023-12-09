@@ -1,7 +1,6 @@
 .wrapper {
   display: flex;
   background-color: black;
-  height: 100vh;
 }
 .wrapper .nav-container {
   width: 20%;
@@ -51,7 +50,7 @@
   margin-right: 20px;
 }
 .wrapper .body-container {
-  width: 90%;
+  width: 80%;
 }
 .wrapper .body-container .body-header {
   display: flex;
@@ -248,6 +247,63 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+.wrapper .body-container .content .song-catalog #album-list {
+  display: flex;
+  overflow-x: scroll;
+  margin-bottom: 40px;
+  padding: 10px;
+}
+.wrapper .body-container .content .song-catalog #album-list .album {
+  display: flex;
+  width: 500px;
+  height: 300px;
+  margin-right: 50px;
+}
+.wrapper .body-container .content .song-catalog #album-list .album .album-cover {
+  width: 200px;
+  height: 275px;
+  margin-right: 25px;
+  border-radius: 10px;
+}
+.wrapper .body-container .content .song-catalog #album-list .album .album-songs {
+  overflow-y: scroll;
+}
+.wrapper .body-container .content .song-catalog #album-list .album .album-songs .song {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+.wrapper .body-container .content .song-catalog #album-list .album .album-songs .song:last-child {
+  margin-right: 0px;
+}
+.wrapper .body-container .content .song-catalog #album-list .album .album-songs .song .song-number {
+  text-align: center;
+  vertical-align: middle;
+}
+.wrapper .body-container .content .song-catalog #album-list .album .album-songs .song .song-details {
+  margin-left: 20px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.wrapper .body-container .content .song-catalog #album-list .album .album-songs .song .song-details .song-title {
+  font-size: 20px;
+  margin-bottom: 5px;
+}
+.wrapper .body-container .content .song-catalog #album-list .album .album-songs .song .song-details .song-additional-info {
+  display: flex;
+  align-items: center;
+  font-size: 15px;
+  color: #888;
+  font-weight: 300;
+}
+.wrapper .body-container .content .song-catalog #album-list .album .album-songs .song .song-details .song-additional-info .seperator {
+  border: 2px solid #888;
+  border-radius: 50%;
+  margin-right: 5px;
+  margin-left: 5px;
 }
 .wrapper .body-container .content .song-player {
   display: flex;

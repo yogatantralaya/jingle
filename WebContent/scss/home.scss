@@ -1,7 +1,7 @@
 .wrapper {
 	display: flex;
 	background-color: black;
-	height: 100vh;
+	//height: 100vh;
 
 	.nav-container {
 		width: 20%;
@@ -64,7 +64,7 @@
 	}
 
 	.body-container {
-		width: 90%;
+		width: 80%;
 
 		.body-header {
 			display: flex;
@@ -230,8 +230,8 @@
 						}
 					}
 				}
-				
-				#search-results{
+
+				#search-results {
 					display: none;
 				}
 
@@ -274,6 +274,77 @@
 							white-space: nowrap;
 							overflow: hidden;
 							text-overflow: ellipsis;
+						}
+					}
+				}
+
+				#album-list {
+					display: flex;
+					overflow-x: scroll;
+					margin-bottom: 40px;
+					padding: 10px;
+
+					.album {
+						display: flex;
+						width: 500px;
+						height: 300px;
+						margin-right: 50px;
+
+						.album-cover {
+							width: 200px;
+							height: 275px;
+							margin-right: 25px;
+							border-radius: 10px;
+						}
+
+						.album-songs {
+							overflow-y: scroll;
+
+							.song {
+								display: flex;
+								align-items: center;
+								margin-bottom: 10px;
+								cursor: pointer;
+
+								&:last-child {
+									margin-right: 0px;
+								}
+
+								.song-number {
+									text-align: center;
+									vertical-align: middle;
+								}
+
+								.song-details {
+									margin-left: 20px;
+									white-space: nowrap;
+									overflow: hidden;
+									text-overflow: ellipsis;
+
+									.song-title {
+										font-size: 20px;
+										margin-bottom: 5px;
+									}
+
+									.song-additional-info {
+										display: flex;
+										align-items: center;
+										font-size: 15px;
+										color: #888;
+										font-weight: 300;
+
+										.seperator {
+											border: 2px solid #888;
+											border-radius: 50%;
+											margin-right: 5px;
+											margin-left: 5px;
+
+										}
+
+									}
+
+								}
+							}
 						}
 					}
 				}
