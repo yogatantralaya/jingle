@@ -1,4 +1,4 @@
-package com.pdp.finalproject.jingle.servlets;
+package com.pdp.jingle.servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.gson.Gson;
-import com.pdp.finalproject.jingle.models.Song;
+import com.pdp.jingle.models.Song;
 
 @WebServlet("/SongServlet")
 public class SongServlet extends BaseServlet {

@@ -1,4 +1,4 @@
-package com.pdp.finalproject.jingle.utils;
+package com.pdp.jingle.utils;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,9 +10,9 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
-import com.pdp.finalproject.jingle.models.Artist;
-import com.pdp.finalproject.jingle.models.Song;
-import com.pdp.finalproject.jingle.models.User;
+import com.pdp.jingle.models.Artist;
+import com.pdp.jingle.models.Song;
+import com.pdp.jingle.models.User;
 
 public class DbUtil {
 

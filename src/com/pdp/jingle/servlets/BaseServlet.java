@@ -1,4 +1,4 @@
-package com.pdp.finalproject.jingle.servlets;
+package com.pdp.jingle.servlets;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletConfig;
@@ -6,7 +6,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.sql.DataSource;
 
-import com.pdp.finalproject.jingle.utils.DbUtil;
+import com.pdp.jingle.utils.DbUtil;
 
 public class BaseServlet extends HttpServlet {
 

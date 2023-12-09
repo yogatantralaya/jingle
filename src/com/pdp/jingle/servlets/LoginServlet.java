@@ -1,4 +1,4 @@
-package com.pdp.finalproject.jingle.servlets;
+package com.pdp.jingle.servlets;
 
 import java.io.IOException;
 import java.time.LocalTime;
@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import com.pdp.finalproject.jingle.models.User;
+import com.pdp.jingle.models.User;
 
 /**
  * Servlet implementation class LoginServlet
