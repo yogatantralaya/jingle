@@ -6,6 +6,7 @@ $(document).ready(function() {
 	getSongs("recent-list", "recentlyPlayed", userId);
 	getSongs("recommended-list", "trendingSongs", userId);
 	getSongs("album-list", "albums", userId);
+	getPlayList("play-list", "playlist", userId);
 
 	$("#song-search-bar").keyup(function(event) {
 		if (event.target.value.length == 0) {
@@ -94,6 +95,29 @@ function getSongs(divId, requestType, userId = null) {
 					loadTrack();
 				}
 			}
+		},
+		error: function(error) {
+			console.error("Error fetching song:", error);
+		},
+	});
+}
+
+function getPlayList(divId, requestType, userId = null) {
+	$.ajax({
+		url: `/Jingle/SongServlet?requestType=${requestType}&userId=${userId}`,
+		method: "GET",
+		dataType: "json",
+		success: function(data) {
+			let divElement = document.getElementById(divId);
+				for (let i = 0; i < data.length; i++) {
+					let songElement = `<div class="song-info" onclick='playSong(${JSON.stringify(
+						data
+					)}, ${i})'>
+							<img class="song-cover" src="${data[i].albumCover}" />
+							<div class="song-name">${data[i].title}</div>
+						</div>`;
+					divElement.innerHTML += songElement
+				}
 		},
 		error: function(error) {
 			console.error("Error fetching song:", error);

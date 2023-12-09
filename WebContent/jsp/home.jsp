@@ -134,6 +134,8 @@ charset=UTF-8"
 					<div id ="album-list"></div>
 					<h2 class="heading" id="recommended">Recommended</h2>
 					<div id="recommended-list"></div>
+					<h2 class="heading" id="playlist">Playlist</h2>
+					<div id="play-list"></div>
 					<h2 class="heading" id="artist">Artists</h2>
 					<div id="artist-list"></div>
 				</div>

@@ -200,7 +200,8 @@
 .wrapper .body-container .content .song-catalog #trending-list,
 .wrapper .body-container .content .song-catalog #recent-list,
 .wrapper .body-container .content .song-catalog #recommended-list,
-.wrapper .body-container .content .song-catalog #search-list {
+.wrapper .body-container .content .song-catalog #search-list,
+.wrapper .body-container .content .song-catalog #play-list {
   display: flex;
   overflow-x: scroll;
   margin-bottom: 40px;
@@ -209,7 +210,8 @@
 .wrapper .body-container .content .song-catalog #trending-list .song-info,
 .wrapper .body-container .content .song-catalog #recent-list .song-info,
 .wrapper .body-container .content .song-catalog #recommended-list .song-info,
-.wrapper .body-container .content .song-catalog #search-list .song-info {
+.wrapper .body-container .content .song-catalog #search-list .song-info,
+.wrapper .body-container .content .song-catalog #play-list .song-info {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -221,19 +223,22 @@
 .wrapper .body-container .content .song-catalog #trending-list .song-info:last-child,
 .wrapper .body-container .content .song-catalog #recent-list .song-info:last-child,
 .wrapper .body-container .content .song-catalog #recommended-list .song-info:last-child,
-.wrapper .body-container .content .song-catalog #search-list .song-info:last-child {
+.wrapper .body-container .content .song-catalog #search-list .song-info:last-child,
+.wrapper .body-container .content .song-catalog #play-list .song-info:last-child {
   margin-right: 0px;
 }
 .wrapper .body-container .content .song-catalog #trending-list .song-info:hover,
 .wrapper .body-container .content .song-catalog #recent-list .song-info:hover,
 .wrapper .body-container .content .song-catalog #recommended-list .song-info:hover,
-.wrapper .body-container .content .song-catalog #search-list .song-info:hover {
+.wrapper .body-container .content .song-catalog #search-list .song-info:hover,
+.wrapper .body-container .content .song-catalog #play-list .song-info:hover {
   scale: 1.05;
 }
 .wrapper .body-container .content .song-catalog #trending-list .song-info .song-cover,
 .wrapper .body-container .content .song-catalog #recent-list .song-info .song-cover,
 .wrapper .body-container .content .song-catalog #recommended-list .song-info .song-cover,
-.wrapper .body-container .content .song-catalog #search-list .song-info .song-cover {
+.wrapper .body-container .content .song-catalog #search-list .song-info .song-cover,
+.wrapper .body-container .content .song-catalog #play-list .song-info .song-cover {
   width: 100px;
   height: 100px;
   border-radius: 10px;
@@ -242,7 +247,8 @@
 .wrapper .body-container .content .song-catalog #trending-list .song-info .song-name,
 .wrapper .body-container .content .song-catalog #recent-list .song-info .song-name,
 .wrapper .body-container .content .song-catalog #recommended-list .song-info .song-name,
-.wrapper .body-container .content .song-catalog #search-list .song-info .song-name {
+.wrapper .body-container .content .song-catalog #search-list .song-info .song-name,
+.wrapper .body-container .content .song-catalog #play-list .song-info .song-name {
   width: 100px;
   text-align: center;
   white-space: nowrap;

@@ -416,4 +416,49 @@ public class DbUtil {
 		return songList;
 	}
 
+	public List<Song> getPlaylist() throws Exception {
+		List<Song> songList = new ArrayList<>();
+		Connection myCon = null;
+		PreparedStatement myStmt = null;
+		ResultSet myRes = null;
+
+		try {
+			// create a connection
+			myCon = dataSource.getConnection();
+
+			// prepare the statement
+			String query = "select s.*, max(album_title) album_title, max(album_cover_location) album_cover_location, group_concat(concat(artist_first_name, \" \", artist_last_name)) artists from \n"
+					+ "song s \n" + "join album_song_mapper asm\n" + "on s.song_id = asm.song_id\n" + "join album a\n"
+					+ "on asm.album_id = a.album_id\n" + "join song_artist_mapper arsm\n"
+					+ "on s.song_id = arsm.song_id\n" + "join artist ar\n" + "on arsm.artist_id = ar.artist_id\n"
+					+ "group by s.song_id\n" + "order by album_title;";
+			myStmt = myCon.prepareStatement(query);
+			// execute query
+			myRes = myStmt.executeQuery();
+
+			// get the student details and create a student object
+			while (myRes.next()) {
+				String id = myRes.getString("song_id");
+				String title = myRes.getString("song_title");
+				String genre = myRes.getString("song_genre");
+				String duration = myRes.getString("song_duration");
+				String location = myRes.getString("song_location");
+				String albumTitle = myRes.getString("album_title");
+				String albumCover = myRes.getString("album_cover_location");
+				List<String> artists = Arrays.asList(myRes.getString("artists").split(","));
+
+				Song song = new Song(id, title, genre, duration, location, albumTitle,
+						albumCover != null ? albumCover : "media/deafult_album_cover.jpg", artists);
+
+				songList.add(song);
+
+			}
+
+		} finally {
+			// close the connection
+			closeConnection(myCon, myStmt, null);
+		}
+		return songList;
+	}
+
 }
