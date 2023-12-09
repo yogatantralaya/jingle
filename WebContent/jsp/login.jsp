@@ -22,7 +22,7 @@ language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
     <body>
         <div class="wrapper">
             <div class="square"><img src="images/jingle_logo.jpeg" /></div>
-            <form action="LoginServlet" method="GET">
+            <form action="LoginServlet" method="POST">
                 <input type="hidden" name="command" value="LOGIN" />
                 <h1>Login</h1>
                 <p>Sign in to continue</p>
@@ -53,7 +53,7 @@ language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
                 <div class="register-link">
                     <p>
                         Don't have an account?
-                        <a href="register.jsp">Register</a>
+                        <a href="RegisterServlet">Register</a>
                     </p>
                 </div>
             </form>

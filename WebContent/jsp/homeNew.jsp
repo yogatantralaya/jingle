@@ -33,8 +33,8 @@ charset=UTF-8"
 						<div class="item">
 							<i class="material-symbols-outlined">home</i> Home
 						</div>
-						<div class="item">
-							<i class="material-symbols-outlined">mic</i> Artistis
+						<div class="item" onclick="scrollToSection('artist')">
+							<i class="material-symbols-outlined">mic</i> Artists
 						</div>
 						<div class="item">
 							<i class="material-symbols-outlined">library_music</i> Albums
@@ -44,13 +44,13 @@ charset=UTF-8"
 				<div class="section">
 					<div class="heading">Library</div>
 					<div class="item-container">
-						<div class="item">
+						<div class="item" onclick="scrollToSection('recommended')">
 							<i class="material-symbols-outlined">headphones</i> Recommended
 						</div>
-						<div class="item">
-							<i class="material-symbols-outlined">earbuds</i> Recent
+						<div class="item" onclick="scrollToSection('recent')">
+							<i class="material-symbols-outlined">earbuds</i> Recently Played
 						</div>
-						<div class="item">
+						<div class="item" onclick="scrollToSection('')">
 							<i class="material-symbols-outlined">featured_play_list</i>
 							Playlist
 						</div>
@@ -59,13 +59,13 @@ charset=UTF-8"
 				<div class="section">
 					<div class="heading">More</div>
 					<div class="item-container">
-						<div class="item">
-							<i class="material-symbols-outlined">artist</i> Tending Songs
+						<div class="item" onclick="scrollToSection('trending')">
+							<i class="material-symbols-outlined">artist</i> Trending Songs
 						</div>
-						<div class="item">
+						<div class="item" onclick="openPopup()">
 							<i class="material-symbols-outlined">person</i> Account
 						</div>
-						<div class="item">
+						<div class="item" onclick="logout()">
 							<i class="material-symbols-outlined">logout</i> Logout
 						</div>
 					</div>
@@ -88,20 +88,48 @@ charset=UTF-8"
 					</div>
 				</div>
 			</div>
+
+			<div id="overlay" class="overlay">
+				<div class="popup-content">
+					<h2>Account Details</h2><br/><br/>
+					<div class="input-box">
+						<input type="text" name="firstName" id="firstName"
+							value="${User_Details.getFirstName()}" readonly required> <i
+							class="material-symbols-outlined">person</i>
+					</div>
+					<div class="input-box">
+						<input type="text" name="lastName" id="lastName"
+							value="${User_Details.getLastName()}" readonly required> <i
+							class="material-symbols-outlined">person</i>
+					</div>
+					<div class="input-box">
+						<input type="text" name="email" id="email"
+							value="${User_Details.getEmail()}" readonly required> <i
+							class="material-symbols-outlined">mail</i>
+					</div>
+					<div class="input-box">
+						<input type="text" name="location" id="location"
+							value="${User_Details.getLocation()}" readonly required> <i
+							class="material-symbols-outlined">home_pin</i>
+					</div><br/><br/><br/><br/>
+					<button class="close-btn" onclick="closePopup()">Close</button>
+				</div>
+			</div>
+
 			<div class="content">
 				<div class="song-catalog">
-					<h2 class="heading">Artists</h2>
+					<h2 class="heading" id="artist">Artists</h2>
 					<div id="artist-list"></div>
-					<h2 class="heading">Trending Songs</h2>
-					<div id="trending-list"></div>
+					<h2 class="heading" id="trending">Trending Songs</h2>
+					<div id="trending-list" id="recent"></div>
 					<h2 class="heading">Recently Played</h2>
 					<div id="recent-list"></div>
-					<h2 class="heading">Recommended</h2>
+					<h2 class="heading" id="recommended">Recommended</h2>
 					<div id="recommended-list"></div>
 				</div>
 				<div class="song-player">
 					<div class="song-cover">
-						<img id="song-cover"/>
+						<img id="song-cover" />
 					</div>
 					<div class="song-info">
 						<div id="song-name" class="song-name"></div>
@@ -137,5 +165,16 @@ charset=UTF-8"
 
 		</div>
 	</div>
+	<script>
+        const togglePassword = document.querySelector("#togglePassword");
+        const password = document.querySelector("#password");
+
+        togglePassword.addEventListener("click", function () {
+            const type = password.getAttribute("type") === "password" ? "text" : "password";
+            password.setAttribute("type", type);
+            
+            this.classList.toggle("bi-eye");
+        });
+    </script>
 </body>
 </html>

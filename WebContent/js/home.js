@@ -47,7 +47,7 @@ function getSongs(divId, requestType, userId = null) {
 							<div class="song-name">${data[i].title}</div>
 						</div>`
 			}
-			if(requestType == "trendingSongs"){
+			if (requestType == "trendingSongs") {
 				audioSources = data;
 				updateSongDisplay();
 			}
@@ -65,7 +65,7 @@ function playSong(songList, position) {
 	updateSongDisplay();
 	loadTrack();
 	audioPlayer.play();
-	if(!isPlaying){
+	if (!isPlaying) {
 		togglePlayPause();
 	}
 
@@ -75,8 +75,8 @@ function playSong(songList, position) {
 function updateSongDisplay() {
 	let songCover = document.getElementById("song-cover");
 	let songName = document.getElementById("song-name");
-	
-	songCover.src =  audioSources[currentTrackIndex].albumCover;
+
+	songCover.src = audioSources[currentTrackIndex].albumCover;
 	songName.textContent = audioSources[currentTrackIndex].title;
 }
 
@@ -163,3 +163,24 @@ function setPlaybackPosition() {
 	audioPlayer.currentTime =
 		(progressControl.value / 100) * audioPlayer.duration;
 }
+
+function openPopup() {
+	document.getElementById('overlay').style.display = 'flex';
+}
+
+function closePopup() {
+	document.getElementById('overlay').style.display = 'none';
+}
+
+function scrollToSection(sectionId) {
+	var section = document.getElementById(sectionId);
+
+	if (section) {
+		section.scrollIntoView({ behavior: 'smooth' });
+	}
+}
+
+function logout() {
+	window.location.href = '/Jingle_App/LogoutServlet';
+}
+
