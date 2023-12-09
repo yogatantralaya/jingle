@@ -52,9 +52,7 @@ function getSongs(divId, requestType, userId = null) {
 		success: function(data) {
 			let divElement = document.getElementById(divId);
 			if (requestType == "albums") {
-				console.log(data);
 				let albums = Object.groupBy(data, ({ albumCover }) => albumCover);
-				console.log(albums);
 				let albumElement;
 				for (let album in albums) {
 					albumElement = `<div class="album">

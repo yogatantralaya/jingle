@@ -145,7 +145,7 @@ charset=UTF-8"
 						<div id="song-name" class="song-name"></div>
 						<div id="artist-name" class="artist-name"></div>
 					</div>
-					<audio id="myAudio" autoplay></audio>
+					<audio id="myAudio"></audio>
 					<div class="song-progress-bar">
 						<input type="range" id="progressControl" min="0" max="100"
 							value="0" step="1" oninput="setPlaybackPosition()" />

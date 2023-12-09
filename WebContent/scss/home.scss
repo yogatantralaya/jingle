@@ -91,6 +91,7 @@
 					width: 90%;
 					height: 30px;
 					padding: 5px;
+					font-size: 16px;
 
 					&:focus-visible {
 						outline: none;
@@ -305,6 +306,13 @@
 								align-items: center;
 								margin-bottom: 10px;
 								cursor: pointer;
+								padding: 5px 10px;
+								
+								&:hover{
+									background-color: #222;
+									border-radius: 10px;
+									
+								}
 
 								&:last-child {
 									margin-right: 0px;

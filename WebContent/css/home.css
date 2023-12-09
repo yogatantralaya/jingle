@@ -76,6 +76,7 @@
   width: 90%;
   height: 30px;
   padding: 5px;
+  font-size: 16px;
 }
 .wrapper .body-container .body-header .search-bar input:focus-visible {
   outline: none;
@@ -274,6 +275,11 @@
   align-items: center;
   margin-bottom: 10px;
   cursor: pointer;
+  padding: 5px 10px;
+}
+.wrapper .body-container .content .song-catalog #album-list .album .album-songs .song:hover {
+  background-color: #222;
+  border-radius: 10px;
 }
 .wrapper .body-container .content .song-catalog #album-list .album .album-songs .song:last-child {
   margin-right: 0px;
