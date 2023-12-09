@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -219,11 +220,14 @@ public class DbUtil {
 			myCon = dataSource.getConnection();
 
 			// prepare the statement
-			String query = "select s.*, a.album_cover_location from song s join (\n" + "select song_id from \n"
-					+ "song_history\n" + "where\n" + "listen_date > DATE_SUB(current_timestamp, INTERVAL 10 DAY)\n"
-					+ "group by song_id\n" + "order by count(song_id) desc limit 3) sh\n"
-					+ "on s.song_id = sh.song_id\n" + "join album_song_mapper asm\n" + "on s.song_id = asm.song_id\n"
-					+ "join album a\n" + "on asm.album_id = a.album_id\n" + ";";
+			String query = "select s.*, max(album_title) album_title, max(album_cover_location) as album_cover_location, group_concat(concat(artist_first_name, \" \", artist_last_name)) as artists from song s join (\n"
+					+ "select song_id from \n" + "song_history\n" + "where\n"
+					+ "listen_date > DATE_SUB(current_timestamp, INTERVAL 10 DAY)\n" + "group by song_id\n"
+					+ "order by count(song_id) desc limit 5) sh\n" + "on s.song_id = sh.song_id\n"
+					+ "join album_song_mapper asm\n" + "on s.song_id = asm.song_id\n" + "join album a\n"
+					+ "on asm.album_id = a.album_id\n" + "join song_artist_mapper arsm\n"
+					+ "on s.song_id = arsm.song_id\n" + "join artist ar\n" + "on arsm.artist_id = ar.artist_id\n"
+					+ "group by s.song_id\n" + ";";
 			myStmt = myCon.prepareStatement(query);
 
 			// execute query
@@ -236,10 +240,108 @@ public class DbUtil {
 				String genre = myRes.getString("song_genre");
 				String duration = myRes.getString("song_duration");
 				String location = myRes.getString("song_location");
+				String albumTitle = myRes.getString("album_title");
 				String albumCover = myRes.getString("album_cover_location");
+				List<String> artists = Arrays.asList(myRes.getString("artists").split(","));
 
-				Song song = new Song(id, title, genre, duration, location,
-						albumCover != null ? albumCover : "media/deafult_album_cover.jpg", null);
+				Song song = new Song(id, title, genre, duration, location, albumTitle,
+						albumCover != null ? albumCover : "media/deafult_album_cover.jpg", artists);
+
+				songList.add(song);
+
+			}
+
+		} finally {
+			// close the connection
+			closeConnection(myCon, myStmt, null);
+		}
+		return songList;
+	}
+
+	public List<Song> getRecentlyPlayedSongs(String userId) throws Exception {
+
+		List<Song> songList = new ArrayList<>();
+		Connection myCon = null;
+		PreparedStatement myStmt = null;
+		ResultSet myRes = null;
+
+		try {
+			// create a connection
+			myCon = dataSource.getConnection();
+
+			// prepare the statement
+			String query = "select s.*, max(album_title) album_title, max(album_cover_location) album_cover_location, group_concat(concat(artist_first_name, \" \", artist_last_name)) artists from\n"
+					+ "song s \n"
+					+ "join (select song_id, max(listen_date) max_listen_date from song_history where user_id = ? group by song_id) sh\n"
+					+ "on s.song_id = sh.song_id\n" + "join album_song_mapper asm\n" + "on s.song_id = asm.song_id\n"
+					+ "join album a\n" + "on asm.album_id = a.album_id\n" + "join song_artist_mapper arsm\n"
+					+ "on s.song_id = arsm.song_id\n" + "join artist ar\n" + "on arsm.artist_id = ar.artist_id\n"
+					+ "group by song_id\n" + "order by max_listen_date desc;";
+			myStmt = myCon.prepareStatement(query);
+			myStmt.setString(1, userId);
+			// execute query
+			myRes = myStmt.executeQuery();
+
+			// get the student details and create a student object
+			while (myRes.next()) {
+				String id = myRes.getString("song_id");
+				String title = myRes.getString("song_title");
+				String genre = myRes.getString("song_genre");
+				String duration = myRes.getString("song_duration");
+				String location = myRes.getString("song_location");
+				String albumTitle = myRes.getString("album_title");
+				String albumCover = myRes.getString("album_cover_location");
+				List<String> artists = Arrays.asList(myRes.getString("artists").split(","));
+
+				Song song = new Song(id, title, genre, duration, location, albumTitle,
+						albumCover != null ? albumCover : "media/deafult_album_cover.jpg", artists);
+
+				songList.add(song);
+
+			}
+
+		} finally {
+			// close the connection
+			closeConnection(myCon, myStmt, null);
+		}
+		return songList;
+	}
+
+	public List<Song> searchSong(String searchQuery) throws Exception {
+
+		List<Song> songList = new ArrayList<>();
+		Connection myCon = null;
+		PreparedStatement myStmt = null;
+		ResultSet myRes = null;
+
+		try {
+			// create a connection
+			myCon = dataSource.getConnection();
+
+			// prepare the statement
+			String query = "select s.*, max(album_title) album_title, max(album_cover_location) album_cover_location, group_concat(concat(artist_first_name, \" \", artist_last_name)) artists from \n"
+					+ "song s \n" + "join album_song_mapper asm\n" + "on s.song_id = asm.song_id\n" + "join album a\n"
+					+ "on asm.album_id = a.album_id\n" + "join song_artist_mapper arsm\n"
+					+ "on s.song_id = arsm.song_id\n" + "join artist ar\n" + "on arsm.artist_id = ar.artist_id\n"
+					+ "where song_title like ? \n" + "group by s.song_id;";
+			myStmt = myCon.prepareStatement(query);
+			myStmt.setString(1, "%" + searchQuery + "%");
+			// execute query
+			myRes = myStmt.executeQuery();
+
+			// get the student details and create a student object
+			while (myRes.next()) {
+				String id = myRes.getString("song_id");
+				String title = myRes.getString("song_title");
+				String genre = myRes.getString("song_genre");
+				String duration = myRes.getString("song_duration");
+				String location = myRes.getString("song_location");
+				String albumTitle = myRes.getString("album_title");
+				String albumCover = myRes.getString("album_cover_location");
+				List<String> artists = Arrays.asList(myRes.getString("artists").split(","));
+
+				Song song = new Song(id, title, genre, duration, location, albumTitle,
+						albumCover != null ? albumCover : "media/deafult_album_cover.jpg", artists);
 
 				songList.add(song);
 

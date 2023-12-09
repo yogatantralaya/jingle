@@ -1,5 +1,7 @@
 package com.pdp.jingle.models;
 
+import java.util.List;
+
 public class Song {
 
 	String id;
@@ -8,17 +10,19 @@ public class Song {
 	String duration;
 	String location;
 	String albumCover;
-	String artist;
+	String albumTitle;
+	List<String> artists;
 
-	public Song(String id, String title, String genre, String duration, String location, String albumCover,
-			String artist) {
+	public Song(String id, String title, String genre, String duration, String location, String albumTitle,
+			String albumCover, List<String> artists) {
 		this.id = id;
 		this.title = title;
 		this.genre = genre;
 		this.duration = duration;
 		this.location = location;
+		this.albumTitle = albumTitle;
 		this.albumCover = albumCover;
-		this.artist = artist;
+		this.artists = artists;
 	}
 
 	public String getId() {
@@ -61,12 +65,28 @@ public class Song {
 		this.location = location;
 	}
 
+	public String getAlbumTitle() {
+		return albumTitle;
+	}
+
+	public void setAlbumTitle(String albumTitle) {
+		this.albumTitle = albumTitle;
+	}
+
 	public String getAlbumCover() {
 		return albumCover;
 	}
 
 	public void setAlbumCover(String albumCover) {
 		this.albumCover = albumCover;
+	}
+
+	public List<String> getArtists() {
+		return artists;
+	}
+
+	public void setArtists(List<String> artists) {
+		this.artists = artists;
 	}
 
 }

@@ -9,6 +9,7 @@ import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import com.google.gson.Gson;
 import com.pdp.jingle.models.Song;
@@ -25,34 +26,46 @@ public class SongServlet extends BaseServlet {
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		try {
-			String requestType = request.getParameter("requestType");
-			String userId = request.getParameter("userId");
-			List<Song> songList = new ArrayList<>();
+		HttpSession session = request.getSession(false);
+		if (session == null) {
+			response.sendRedirect("LoginServlet");
+		} else {
+			try {
+				String requestType = request.getParameter("requestType");
+				String searchQuery = request.getParameter("searchQuery");
+				String userId = request.getParameter("userId");
+				List<Song> songList = new ArrayList<>();
 
-			switch (requestType) {
-			case "trendingSongs": {
-				songList = dbUtil.getTrendingSongs();
-				break;
-			}
-			case "recentlyPlayed": {
-				songList = dbUtil.getTrendingSongs();
-				break;
-			}
-			case "recommended": {
-				songList = dbUtil.getTrendingSongs();
-				break;
-			}
-			}
+				if (requestType != null) {
+					switch (requestType) {
+					case "trendingSongs": {
+						songList = dbUtil.getTrendingSongs();
+						break;
+					}
+					case "recentlyPlayed": {
+						songList = dbUtil.getRecentlyPlayedSongs(userId);
+						break;
+					}
+					case "recommended": {
+						songList = dbUtil.getTrendingSongs();
+						break;
+					}
+					}
+				}
 
-			String songsJsonString = new Gson().toJson(songList);
-			PrintWriter out = response.getWriter();
-			response.setContentType("application/json");
-			response.setCharacterEncoding("UTF-8");
-			out.print(songsJsonString);
-			out.flush();
-		} catch (Exception exec) {
-			throw new ServletException(exec);
+				if (searchQuery != null) {
+					songList = dbUtil.searchSong(searchQuery);
+				}
+
+				String songsJsonString = new Gson().toJson(songList);
+				PrintWriter out = response.getWriter();
+				response.setContentType("application/json");
+				response.setCharacterEncoding("UTF-8");
+				out.print(songsJsonString);
+				out.flush();
+			} catch (Exception exec) {
+				throw new ServletException(exec);
+			}
 		}
 	}
 
