@@ -58,6 +58,10 @@ public class SongServlet extends BaseServlet {
 						songList = dbUtil.getTrendingSongs();
 						break;
 					}
+					case "albums" :{
+						songList = dbUtil.getAllSongs();
+						break;
+					}
 					}
 				}
 

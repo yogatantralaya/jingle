@@ -1,6 +1,7 @@
 .wrapper {
   display: flex;
   background-color: black;
+  height: 100vh;
 }
 .wrapper .nav-container {
   width: 20%;
@@ -136,9 +137,6 @@
   color: #414b3b;
   padding: 20px 45px 20px 20px;
 }
-.wrapper .body-container .popup-content input::placeborder {
-  color: #414b3b;
-}
 .wrapper .body-container .popup-content i {
   position: absolute;
   right: 20px;
@@ -167,7 +165,7 @@
 }
 .wrapper .body-container .content .song-catalog {
   width: 65%;
-  height: 700px;
+  height: 800px;
   overflow-y: scroll;
 }
 .wrapper .body-container .content .song-catalog .heading {

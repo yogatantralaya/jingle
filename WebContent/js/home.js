@@ -5,6 +5,7 @@ $(document).ready(function() {
 	getSongs("trending-list", "trendingSongs", userId);
 	getSongs("recent-list", "recentlyPlayed", userId);
 	getSongs("recommended-list", "trendingSongs", userId);
+	getSongs("album-list", "albumSongs", userId);
 
 	$("#song-search-bar").keyup(function(event) {
 		if (event.target.value.length == 0) {
@@ -46,6 +47,48 @@ function getArtists() {
 function getSongs(divId, requestType, userId = null) {
 	$.ajax({
 		url: `/Jingle/SongServlet?requestType=${requestType}&userId=${userId}`,
+		method: "GET",
+		dataType: "json",
+		success: function(data) {
+			let albumList = document.getElementById(divId);
+			if (requestType == "albumSongs") {
+				const result = Object.groupBy(data, ({ albumCover }) => albumCover);
+				for (let albumCover in result) {
+					let img = `<img class="album-cover" src="${data[i].albumCover}" />`
+					for (let i = 0; i < data.length; i++) {
+						albumList += `<div class="song-info" onclick='playSong(${JSON.stringify(data)}, ${i})'>
+							<div class="song-info">${data[i].title}</div>
+						</div>`;
+					}
+					let album = img + albumList;
+				}
+			}
+			else {
+
+				for (let i = 0; i < data.length; i++) {
+					songsList.innerHTML += `<div class="song-info" onclick='playSong(${JSON.stringify(
+						data
+					)}, ${i})'>
+							<img class="song-cover" src="${data[i].albumCover}" />
+							<div class="song-name">${data[i].title}</div>
+						</div>`;
+				}
+				if (requestType == "recentlyPlayed") {
+					audioSources = data;
+					updateSongDisplay();
+					loadTrack();
+				}
+			}
+		},
+		error: function(error) {
+			console.error("Error fetching song:", error);
+		},
+	});
+}
+
+function getAllSongs(divId, requestType) {
+	$.ajax({
+		url: `/Jingle/SongServlet?requestType=${requestType}`,
 		method: "GET",
 		dataType: "json",
 		success: function(data) {

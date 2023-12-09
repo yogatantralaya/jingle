@@ -130,6 +130,8 @@ charset=UTF-8"
 					<div id="recent-list"></div>
 					<h2 class="heading" id="trending">Trending Songs</h2>
 					<div id="trending-list"></div>
+					<h2 class="heading" id=album>Albums</h2>
+					<div id ="album-list"></div>
 					<h2 class="heading" id="recommended">Recommended</h2>
 					<div id="recommended-list"></div>
 					<h2 class="heading" id="artist">Artists</h2>
