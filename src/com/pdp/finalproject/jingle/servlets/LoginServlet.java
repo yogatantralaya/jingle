@@ -9,6 +9,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import com.pdp.finalproject.jingle.models.User;
 
@@ -29,8 +30,13 @@ public class LoginServlet extends BaseServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		RequestDispatcher dispatcher = request.getRequestDispatcher("jsp/login.jsp");
-		dispatcher.forward(request, response);
+		HttpSession session = request.getSession(false);
+		if (session != null) {
+			response.sendRedirect("HomePageServlet");
+		} else {
+			RequestDispatcher dispatcher = request.getRequestDispatcher("jsp/login.jsp");
+			dispatcher.forward(request, response);
+		}
 	}
 
 	@Override
@@ -69,16 +75,17 @@ public class LoginServlet extends BaseServlet {
 				}
 
 				User userDetails = dbUtil.getUserDetails(user);
-				request.setAttribute("User_Details", userDetails);
-				request.setAttribute("Greetings", greetings);
 				request.removeAttribute("loginError");
-				
-				RequestDispatcher dispatcher = request.getRequestDispatcher("jsp/homeNew.jsp");
-				dispatcher.forward(request, response);
-				
+
+				HttpSession session = request.getSession(true);
+				session.setAttribute("User_Details", userDetails);
+				session.setAttribute("Greetings", greetings);
+				response.sendRedirect("HomePageServlet");
+
 			} else {
 				request.setAttribute("loginError", "Incorrect email or password");
-				response.sendRedirect("LoginServlet");
+				RequestDispatcher dispatcher = request.getRequestDispatcher("jsp/login.jsp");
+				dispatcher.forward(request, response);
 			}
 		} catch (Exception exec) {
 			exec.printStackTrace();
