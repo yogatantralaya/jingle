@@ -251,7 +251,6 @@
 						flex-direction: column;
 						justify-content: center;
 						align-items: center;
-						width: 110px;
 						margin-right: 30px;
 						cursor: pointer;
 
@@ -308,11 +307,11 @@
 								margin-bottom: 10px;
 								cursor: pointer;
 								padding: 5px 10px;
-								
-								&:hover{
+
+								&:hover {
 									background-color: #222;
 									border-radius: 10px;
-									
+
 								}
 
 								&:last-child {
@@ -342,6 +341,11 @@
 										font-size: 15px;
 										color: #888;
 										font-weight: 300;
+
+										.song-artist {
+											overflow: hidden;
+											text-overflow: ellipsis;
+										}
 
 										.seperator {
 											border: 2px solid #888;
@@ -374,6 +378,85 @@
 					img {
 						width: 300px;
 						height: 400px;
+					}
+				}
+
+				.song-info {
+					width: 300px;
+					font-weight: 300;
+					margin-bottom: 30px;
+
+					.song-name {
+						font-size: 25px;
+						margin-bottom: 5px;
+					}
+
+					.song-artists {
+						font-size: 18px;
+						color: #888;
+						margin-bottom: 5px;
+					}
+
+					.song-genre {
+						font-size: 18px;
+						color: #888;
+					}
+				}
+
+				.song-progress-bar {
+					display: flex;
+					width: 300px;
+					margin-bottom: 30px;
+					align-items: center;
+
+					input {
+						width: 100%;
+						margin: 0 10px;
+					}
+
+					.song-current-time,
+					.song-duration {
+						font-size: 13px;
+						color: #888;
+						font-weight: 100;
+					}
+				}
+
+				.control-button {
+					cursor: pointer;
+					width: 30px;
+					height: 30px;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+				}
+
+				.volume-button {
+					margin-right: 10px;
+				}
+
+				.song-controls {
+					display: flex;
+					width: 300px;
+					justify-content: space-between;
+					align-items: center;
+
+
+					.play-pause-button {
+						width: 45px;
+						height: 45px;
+						color: black;
+						background-color: white;
+						border-radius: 50%;
+					}
+
+					.previous-button,
+					.next-button {
+						width: 30px;
+						height: 30px;
+						color: black;
+						background-color: white;
+						border-radius: 50%;
 					}
 				}
 			}

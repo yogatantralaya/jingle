@@ -25,6 +25,23 @@ public class DbUtil {
 		this.dataSource = dataSource;
 	}
 
+	private void closeConnection(Connection myCon, Statement myStmt, ResultSet myRes) throws SQLException {
+		try {
+			if (myStmt != null) {
+				myStmt.close();
+			}
+			if (myRes != null) {
+				myRes.close();
+			}
+			if (myCon != null) {
+				myCon.close();// this will not necessarily close the db connection but will return the
+								// connection pool
+			}
+		} catch (Exception exec) {
+			exec.printStackTrace();
+		}
+	}
+
 	// findUser() method validates if the user already exists on the db
 	public boolean findUser(User user) throws Exception {
 
@@ -39,7 +56,7 @@ public class DbUtil {
 			myCon = dataSource.getConnection();
 
 			// prepare the statement
-			String query = "select * from user where user_email=? AND user_password=?";
+			String query = "select * from user where user_email=? AND user_password=?;";
 			myStmt = myCon.prepareStatement(query);
 
 			myStmt.setString(1, user.getEmail());
@@ -74,7 +91,7 @@ public class DbUtil {
 			myCon = dataSource.getConnection();
 
 			// prepare the statement
-			String query = "select * from user where user_email=? AND user_password=?";
+			String query = "select * from user where user_email=? AND user_password=?;";
 			myStmt = myCon.prepareStatement(query);
 
 			myStmt.setString(1, user.getEmail());
@@ -119,7 +136,7 @@ public class DbUtil {
 			myCon = dataSource.getConnection();
 
 			// prepare the statement
-			String query = "select * from user where user_email=?";
+			String query = "select * from user where user_email=?;";
 			myStmt = myCon.prepareStatement(query);
 
 			myStmt.setString(1, email);
@@ -150,7 +167,7 @@ public class DbUtil {
 			// create an sql statement
 			String query = "INSERT INTO user"
 					+ "(user_first_name,user_last_name,user_email,user_password,user_location,user_dp_location)"
-					+ "values(?,?,?,?,?,?)";
+					+ "values(?,?,?,?,?,?);";
 			myStmt = myCon.prepareStatement(query);
 
 			// setting the values for the place holders
@@ -276,7 +293,7 @@ public class DbUtil {
 					+ "on s.song_id = sh.song_id\n" + "join album_song_mapper asm\n" + "on s.song_id = asm.song_id\n"
 					+ "join album a\n" + "on asm.album_id = a.album_id\n" + "join song_artist_mapper arsm\n"
 					+ "on s.song_id = arsm.song_id\n" + "join artist ar\n" + "on arsm.artist_id = ar.artist_id\n"
-					+ "group by song_id\n" + "order by max_listen_date desc;";
+					+ "group by song_id\n" + "order by max_listen_date desc limit 10;";
 			myStmt = myCon.prepareStatement(query);
 			myStmt.setString(1, userId);
 			// execute query
@@ -354,23 +371,6 @@ public class DbUtil {
 		return songList;
 	}
 
-	private void closeConnection(Connection myCon, Statement myStmt, ResultSet myRes) throws SQLException {
-		try {
-			if (myStmt != null) {
-				myStmt.close();
-			}
-			if (myRes != null) {
-				myRes.close();
-			}
-			if (myCon != null) {
-				myCon.close();// this will not necessarily close the db connection but will return the
-								// connection pool
-			}
-		} catch (Exception exec) {
-			exec.printStackTrace();
-		}
-	}
-
 	public List<Song> getAllSongs() throws Exception {
 		List<Song> songList = new ArrayList<>();
 		Connection myCon = null;
@@ -416,7 +416,7 @@ public class DbUtil {
 		return songList;
 	}
 
-	public List<Song> getPlaylist() throws Exception {
+	public List<Song> getPlaylist(String userId) throws Exception {
 		List<Song> songList = new ArrayList<>();
 		Connection myCon = null;
 		PreparedStatement myStmt = null;
@@ -428,11 +428,14 @@ public class DbUtil {
 
 			// prepare the statement
 			String query = "select s.*, max(album_title) album_title, max(album_cover_location) album_cover_location, group_concat(concat(artist_first_name, \" \", artist_last_name)) artists from \n"
-					+ "song s \n" + "join album_song_mapper asm\n" + "on s.song_id = asm.song_id\n" + "join album a\n"
-					+ "on asm.album_id = a.album_id\n" + "join song_artist_mapper arsm\n"
+					+ "song s\n"
+					+ "join (select user_id, song_id, max(add_date) max_add_date from playlist where user_id = ? group by song_id) p\n"
+					+ "on s.song_id = p.song_id\n" + "join album_song_mapper asm\n" + "on s.song_id = asm.song_id\n"
+					+ "join album a\n" + "on asm.album_id = a.album_id\n" + "join song_artist_mapper arsm\n"
 					+ "on s.song_id = arsm.song_id\n" + "join artist ar\n" + "on arsm.artist_id = ar.artist_id\n"
-					+ "group by s.song_id\n" + "order by album_title;";
+					+ "group by s.song_id order by max_add_date desc;";
 			myStmt = myCon.prepareStatement(query);
+			myStmt.setString(1, userId);
 			// execute query
 			myRes = myStmt.executeQuery();
 
@@ -459,6 +462,69 @@ public class DbUtil {
 			closeConnection(myCon, myStmt, null);
 		}
 		return songList;
+	}
+
+	public void addSongHistory(String userId, String songId) throws Exception {
+		Connection myCon = null;
+		PreparedStatement myStmt = null;
+		try {
+			// create a connection
+			myCon = dataSource.getConnection();
+
+			// prepare the statement
+			String query = "insert into song_history (user_id, song_id, listen_date) values (?, ?, current_timestamp);";
+			myStmt = myCon.prepareStatement(query);
+			myStmt.setString(1, userId);
+			myStmt.setString(2, songId);
+			// execute query
+			myStmt.execute();
+
+		} finally {
+			// close the connection
+			closeConnection(myCon, myStmt, null);
+		}
+	}
+
+	public void addSongToPlaylist(String userId, String songId) throws Exception {
+		Connection myCon = null;
+		PreparedStatement myStmt = null;
+		try {
+			// create a connection
+			myCon = dataSource.getConnection();
+
+			// prepare the statement
+			String query = "insert into playlist (user_id, song_id, add_date) values (?, ?, current_timestamp);";
+			myStmt = myCon.prepareStatement(query);
+			myStmt.setString(1, userId);
+			myStmt.setString(2, songId);
+			// execute query
+			myStmt.execute();
+
+		} finally {
+			// close the connection
+			closeConnection(myCon, myStmt, null);
+		}
+	}
+
+	public void deleteSongFromPlaylist(String userId, String songId) throws Exception {
+		Connection myCon = null;
+		PreparedStatement myStmt = null;
+		try {
+			// create a connection
+			myCon = dataSource.getConnection();
+
+			// prepare the statement
+			String query = "delete from playlist where user_id = ? and song_id = ?;";
+			myStmt = myCon.prepareStatement(query);
+			myStmt.setString(1, userId);
+			myStmt.setString(2, songId);
+			// execute query
+			myStmt.execute();
+
+		} finally {
+			// close the connection
+			closeConnection(myCon, myStmt, null);
+		}
 	}
 
 }

@@ -3,10 +3,9 @@ $(document).ready(function() {
 	getArtists();
 	userId = document.getElementById("user-id").innerText;
 	getSongs("trending-list", "trendingSongs", userId);
-	getSongs("recent-list", "recentlyPlayed", userId);
+	getSongs("recent-list", "recentlyPlayed", userId, doOtherOpreation = true);
 	getSongs("recommended-list", "trendingSongs", userId);
 	getSongs("album-list", "albums", userId);
-	getPlayList("play-list", "playlist", userId);
 
 	$("#song-search-bar").keyup(function(event) {
 		if (event.target.value.length == 0) {
@@ -24,6 +23,13 @@ var audioSources;
 var currentTrackIndex = 0;
 var audioPlayer;
 var isPlaying;
+var isLooped;
+const playThresold = 5;
+var isPlaythresholdCrossed = false;
+var playList = [];
+
+
+/** AJAX calls */
 
 function getArtists() {
 	$.ajax({
@@ -45,7 +51,7 @@ function getArtists() {
 	});
 }
 
-function getSongs(divId, requestType, userId = null) {
+function getSongs(divId, requestType, userId = null, doOtherOperations = false) {
 	$.ajax({
 		url: `/Jingle/SongServlet?requestType=${requestType}&userId=${userId}`,
 		method: "GET",
@@ -53,15 +59,18 @@ function getSongs(divId, requestType, userId = null) {
 		success: function(data) {
 			let divElement = document.getElementById(divId);
 			if (requestType == "albums") {
-				let albums = Object.groupBy(data, ({ albumCover }) => albumCover);
-				let albumElement;
+				let albums = Object.groupBy(
+					data,
+					({ albumCover }) => albumCover
+				);
+				let albumElement = "";
 				for (let album in albums) {
-					albumElement = `<div class="album">
+					albumElement += `<div class="album">
 									<img class="album-cover" src="${album}"/>
-									<div class="album-songs">`
+									<div class="album-songs">`;
 					for (let i = 0; i < albums[album].length; i++) {
 						albumElement += `<div class="song" onclick='playSong(${JSON.stringify(
-							data
+							albums[album]
 						)}, ${i})'>
 										<p class="song-number">${i + 1}</p>
 										<div class="song-details">
@@ -69,7 +78,9 @@ function getSongs(divId, requestType, userId = null) {
 											<div class="song-additional-info">
 											<p class="song-artist">${albums[album][i].artists.toString()}</p>
 											<div class="seperator"></div>
-											<p class="song-duration">${albums[album][i].duration}</p>
+											<p class="song-duration">${albums[album][i].duration
+								.toString()
+								.replace(".", ":")}</p>
 											</div>
 										</div>
 									</div>`;
@@ -77,9 +88,15 @@ function getSongs(divId, requestType, userId = null) {
 					albumElement += `</div></div>`;
 				}
 				divElement.innerHTML = albumElement;
-			}
-			else {
-
+			} else {
+				if (requestType == "recentlyPlayed") {
+					$(`#${divId}`).empty();
+					if (doOtherOperations) {
+						audioSources = data;
+						getPlayList(userId);
+						loadTrack();
+					}
+				}
 				for (let i = 0; i < data.length; i++) {
 					let songElement = `<div class="song-info" onclick='playSong(${JSON.stringify(
 						data
@@ -87,12 +104,7 @@ function getSongs(divId, requestType, userId = null) {
 							<img class="song-cover" src="${data[i].albumCover}" />
 							<div class="song-name">${data[i].title}</div>
 						</div>`;
-					divElement.innerHTML += songElement
-				}
-				if (requestType == "recentlyPlayed") {
-					audioSources = data;
-					updateSongDisplay();
-					loadTrack();
+					divElement.innerHTML += songElement;
 				}
 			}
 		},
@@ -102,22 +114,56 @@ function getSongs(divId, requestType, userId = null) {
 	});
 }
 
-function getPlayList(divId, requestType, userId = null) {
+function getPlayList(userId) {
 	$.ajax({
-		url: `/Jingle/SongServlet?requestType=${requestType}&userId=${userId}`,
+		url: `/Jingle/PlaylistServlet?userId=${userId}`,
 		method: "GET",
 		dataType: "json",
 		success: function(data) {
-			let divElement = document.getElementById(divId);
-				for (let i = 0; i < data.length; i++) {
-					let songElement = `<div class="song-info" onclick='playSong(${JSON.stringify(
-						data
-					)}, ${i})'>
+			playList = data;
+			// update the display after getting the playlist
+			updateSongDisplay();
+			$("#play-list").empty();
+			let divElement = document.getElementById("play-list");
+			for (let i = 0; i < data.length; i++) {
+				let songElement = `<div class="song-info" onclick='playSong(${JSON.stringify(
+					data
+				)}, ${i})'>
 							<img class="song-cover" src="${data[i].albumCover}" />
 							<div class="song-name">${data[i].title}</div>
 						</div>`;
-					divElement.innerHTML += songElement
-				}
+				divElement.innerHTML += songElement;
+			}
+		},
+		error: function(error) {
+			console.error("Error fetching song:", error);
+		},
+	});
+}
+
+function addSongToPlaylist(userId, songId) {
+	$.ajax({
+		url: `/Jingle/PlaylistServlet?userId=${userId}&songId=${songId}`,
+		method: "POST",
+		dataType: "json",
+		success: function() {
+			updatePlaylistButton(true);
+			getPlayList(userId);
+		},
+		error: function(error) {
+			console.error("Error fetching song:", error);
+		},
+	});
+}
+
+function deleteSongFromPlaylist(userId, songId) {
+	$.ajax({
+		url: `/Jingle/PlaylistServlet?userId=${userId}&songId=${songId}`,
+		method: "DELETE",
+		dataType: "json",
+		success: function() {
+			updatePlaylistButton(false);
+			getPlayList(userId);
 		},
 		error: function(error) {
 			console.error("Error fetching song:", error);
@@ -145,7 +191,6 @@ function searchSong(searchQuery) {
 			} else {
 				window.location = contextPath + data.url;
 			}
-
 		},
 		error: function(error) {
 			console.error("Error searching song:", error);
@@ -155,10 +200,11 @@ function searchSong(searchQuery) {
 
 function addPlayHistory(userId, songId) {
 	$.ajax({
-		url: `/Jingle/SongServlet?userId=${userId}&songId=${songId}`,
+		url: `/Jingle/SongHistoryServlet?userId=${userId}&songId=${songId}`,
 		method: "POST",
 		dataType: "json",
 		success: function() {
+			getSongs("recent-list", "recentlyPlayed", userId);
 		},
 		error: function(error) {
 			console.error("Error in adding play history:", error);
@@ -166,10 +212,25 @@ function addPlayHistory(userId, songId) {
 	});
 }
 
+
+/** Utility methods */
+
+function initializeAudioPlayer() {
+	audioPlayer = document.getElementById("myAudio");
+	isPlaying = false;
+	isLooped = false;
+	if (audioSources != null) {
+		loadTrack();
+	}
+	audioPlayer.addEventListener("timeupdate", updateSongProgress);
+	audioPlayer.addEventListener("timeupdate", checkPlayDuration);
+	audioPlayer.addEventListener("ended", playNext);
+}
+
 function playSong(songList, position) {
+	isPlaythresholdCrossed = false;
 	audioSources = songList;
 	currentTrackIndex = position;
-	addPlayHistory(userId, audioSources[currentTrackIndex].id);
 	updateSongDisplay();
 	loadTrack();
 	audioPlayer.play();
@@ -181,19 +242,34 @@ function playSong(songList, position) {
 function updateSongDisplay() {
 	let songCover = document.getElementById("song-cover");
 	let songName = document.getElementById("song-name");
+	let artistName = document.getElementById("song-artists");
+	let songGenre = document.getElementById("song-genre");
+	let songDuration = document.getElementById("song-duration");
 
 	songCover.src = audioSources[currentTrackIndex].albumCover;
 	songName.textContent = audioSources[currentTrackIndex].title;
+	artistName.textContent = audioSources[currentTrackIndex].artists.toString();
+	songGenre.textContent = audioSources[currentTrackIndex].genre;
+	songDuration.textContent = audioSources[currentTrackIndex].duration
+		.toString()
+		.replace(".", ":");
+	updatePlaylistButton(playList.filter((song) => song.id == audioSources[currentTrackIndex].id).length > 0);
 }
 
-function initializeAudioPlayer() {
-	audioPlayer = document.getElementById("myAudio");
-	isPlaying = false;
-	if (audioSources != null) {
-		loadTrack();
+function checkPlayDuration() {
+
+	if (audioPlayer.loop && audioPlayer.currentTime == 0) {
+		isPlaythresholdCrossed = false;
 	}
-	audioPlayer.addEventListener("timeupdate", updateProgressBar);
-	audioPlayer.addEventListener("ended", playNext);
+	if (!isPlaythresholdCrossed && audioPlayer.currentTime > playThresold) {
+		isPlaythresholdCrossed = true;
+		addPlayHistory(userId, audioSources[currentTrackIndex].id);
+	}
+}
+
+function loadTrack() {
+	audioPlayer.src = audioSources[currentTrackIndex].location;
+	audioPlayer.load();
 }
 
 function togglePlayPause() {
@@ -207,14 +283,13 @@ function togglePlayPause() {
 }
 
 function playNext() {
-	console.log("test")
 	currentTrackIndex = (currentTrackIndex + 1) % audioSources.length;
 	updateSongDisplay();
 	loadTrack();
 	audioPlayer.play();
+	isPlaythresholdCrossed = false;
 	isPlaying = true;
 	updatePlayPauseButton();
-	addPlayHistory(userId, audioSources[currentTrackIndex].id);
 }
 
 function playPrevious() {
@@ -223,18 +298,14 @@ function playPrevious() {
 	updateSongDisplay();
 	loadTrack();
 	audioPlayer.play();
+	isPlaythresholdCrossed = false;
 	isPlaying = true;
-	addPlayHistory(userId, audioSources[currentTrackIndex].id);
+	updatePlayPauseButton();
 }
 
 function toggleMute() {
 	audioPlayer.muted = !audioPlayer.muted;
-	updateVolumeControl();
-}
-
-function loadTrack() {
-	audioPlayer.src = audioSources[currentTrackIndex].location;
-	audioPlayer.load();
+	updateVolumeButton();
 }
 
 function updatePlayPauseButton() {
@@ -244,9 +315,18 @@ function updatePlayPauseButton() {
 		: '<i class="material-symbols-outlined">play_arrow</i>';
 }
 
-function updateVolumeControl() {
-	const volumeControl = document.getElementById("volumeControl");
-	volumeControl.value = audioPlayer.muted ? 0 : audioPlayer.volume * 100;
+function updateVolumeButton() {
+	const volumeButton = document.getElementById("volumeButton");
+	volumeButton.innerHTML = audioPlayer.muted
+		? '<i class="material-symbols-outlined">no_sound</i>'
+		: '<i class="material-symbols-outlined">volume_up</i>';
+}
+
+function updatePlaylistButton(inPlaylist) {
+	const playlistButton = document.getElementById("playlistButton");
+	playlistButton.innerHTML = inPlaylist
+		? '<i class="material-symbols-outlined">playlist_remove</i>'
+		: '<i class="material-symbols-outlined">playlist_add</i>';
 }
 
 function setVolume() {
@@ -261,20 +341,46 @@ function toggleLoop() {
 }
 
 function updateLoopIcon() {
-	loopIcon.textContent = isLooped
+	const loopButton = document.getElementById("loopButton");
+	loopButton.innerHTML = isLooped
 		? '<i class="material-symbols-outlined">repeat_one</i>'
 		: '<i class="material-symbols-outlined">repeat</i>';
 }
-function updateProgressBar() {
-	console.log(audioPlayer.currentTime);
+
+function updateSongProgress() {
 	const progressBar = document.getElementById("progressControl");
-	progressBar.value = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+	const songCurrentTime = document.getElementById("song-current-time");
+	songCurrentTime.innerHTML =
+		Math.trunc(Math.trunc(audioPlayer.currentTime) / 60) +
+		":" +
+		(Math.trunc(audioPlayer.currentTime) % 60 < 10
+			? "0" + (Math.trunc(audioPlayer.currentTime) % 60)
+			: Math.trunc(audioPlayer.currentTime) % 60);
+
+	if (!isNaN(audioPlayer.duration)) {
+		progressBar.value =
+			(audioPlayer.currentTime / audioPlayer.duration) * 100;
+	} else {
+		progressBar.value = 0;
+	}
 }
 
 function setPlaybackPosition() {
 	audioPlayer.currentTime =
 		(progressControl.value / 100) * audioPlayer.duration;
 }
+
+
+function togglePlaylist() {
+	let songId = audioSources[currentTrackIndex].id;
+	if (playList.filter((song) => song.id == songId).length > 0) {
+		deleteSongFromPlaylist(userId, songId);
+
+	} else {
+		addSongToPlaylist(userId, songId);
+	}
+}
+
 
 function openPopup() {
 	document.getElementById("overlay").style.display = "flex";
