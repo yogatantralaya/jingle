@@ -2,7 +2,12 @@ package com.pdp.jingle.servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -42,7 +47,7 @@ public class SongServlet extends BaseServlet {
 					break;
 				}
 				case "recommended": {
-					songList = dbUtil.getTrendingSongs();
+					songList = getRecommendedSongs(userId);
 					break;
 				}
 				case "albums": {
@@ -69,5 +74,22 @@ public class SongServlet extends BaseServlet {
 		} catch (Exception exec) {
 			throw new ServletException(exec);
 		}
+	}
+
+	private List<Song> getRecommendedSongs(String userId) throws Exception {
+		List<Song> songList = new ArrayList<>();
+		HttpRequest request = HttpRequest.newBuilder()
+				.uri(URI.create(String.format("http://localhost:9080/songs?userId=%s", userId)))
+				.method("GET", HttpRequest.BodyPublishers.noBody()).build();
+		HttpResponse<String> response = null;
+		try {
+			response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		songList = dbUtil.getSongsFromList(Arrays.asList(response.body().split(",")));
+		return songList;
 	}
 }

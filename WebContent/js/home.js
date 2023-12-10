@@ -4,7 +4,7 @@ $(document).ready(function() {
 	userId = document.getElementById("user-id").innerText;
 	getSongs("trending-list", "trendingSongs", userId);
 	getSongs("recent-list", "recentlyPlayed", userId, doOtherOpreation = true);
-	getSongs("recommended-list", "trendingSongs", userId);
+	getSongs("recommended-list", "recommended", userId);
 	getSongs("album-list", "albums", userId);
 
 	$("#song-search-bar").keyup(function(event) {
